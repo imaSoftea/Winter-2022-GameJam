@@ -301,7 +301,7 @@ GameObject:
   - component: {fileID: 8150358575585309182}
   - component: {fileID: 8150358575585309169}
   m_Layer: 0
-  m_Name: Platform - Short
+  m_Name: O_SpikePlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

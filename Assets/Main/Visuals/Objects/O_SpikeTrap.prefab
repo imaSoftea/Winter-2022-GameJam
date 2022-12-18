@@ -451,7 +451,7 @@ GameObject:
   m_Component:
   - component: {fileID: 893129144506008818}
   m_Layer: 0
-  m_Name: Moving Trap
+  m_Name: O_SpikeTrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
