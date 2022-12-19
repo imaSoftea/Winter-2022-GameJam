@@ -5,7 +5,6 @@ using UnityEngine;
 public class S_PlayerMov : MonoBehaviour
 {
     [Header("Movement")]
-    //Movement Speed
     public float movSpeed;
     public float groundDrag;
     public float jumpForce;
@@ -20,39 +19,55 @@ public class S_PlayerMov : MonoBehaviour
     public LayerMask whatIsWall;
     bool walled;
 
+    [Header("Sliding")]
+    public float maxSideTime;
+    public float slideForce;
+    private float slideTimer;
+
+    private float bumpAvoidTimer;
+
+    public float slideYScale;
+    private float startYScale;
+    private KeyCode slideKey = KeyCode.LeftControl;
+
+    public float maxSlopeAngle;
+    private RaycastHit slopeHit;
+
+    private bool isSliding;
+
     [Header("Other")]
-    //Orientation
+    public Transform player;
+
     KeyCode jumpKey = KeyCode.Space;
     public Transform orient;
     Vector3 moveDir;
 
-    //Input
     float horzIn;
     float vertIn;
 
-    //Extras
     bool doubleJumpReady;
-
-    //RigidBody
     Rigidbody rb;
     
+    //Start
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+
+        startYScale = player.localScale.y;
     }
 
+    //Updates
     void Update()
     {
         GetInput();
-        SpeedClamp();
         CheckGround();
         CheckWall();
 
         //Jump
-        if (Input.GetKeyDown(jumpKey) && (grounded || doubleJumpReady))
+        if (Input.GetKeyDown(jumpKey) && (walled || grounded || doubleJumpReady))
         {
-            if (!grounded)
+            if (!grounded && !walled)
             {
                 DoubleJump();
                 doubleJumpReady = false;
@@ -63,32 +78,67 @@ public class S_PlayerMov : MonoBehaviour
             }
         }
 
+        //Sliding
+        if (Input.GetKeyDown(slideKey) && (vertIn != 0 || vertIn != 0))
+        {
+            StartSlide();
+        }
+
+        if(Input.GetKeyUp(slideKey) && isSliding)
+        {
+            EndSlide();
+        }
+
         //Wall
-        if(walled)
+        if (walled)
         {
             WallClamp();
             Debug.Log("Riding Wall");
         }
     }
     
+
     void FixedUpdate()
     {
         MovePlayer();
+        SpeedClamp();
+        if (isSliding) Sliding();
     }
 
+    //Input
     private void GetInput()
     {
         horzIn = Input.GetAxisRaw("Horizontal");
         vertIn = Input.GetAxisRaw("Vertical");
     }
 
+    //Basic Movment
     private void MovePlayer()
     {
-        //Add Force
         moveDir = orient.forward * vertIn + orient.right * horzIn;
-        rb.AddForce(moveDir.normalized * movSpeed * 10f, ForceMode.Force);
+
+        //Add Force
+        if (CheckSlope())
+        {
+            rb.AddForce(GetSlopeDir() * movSpeed * 10f, ForceMode.Force);
+            if(isSliding)
+            {
+                rb.AddForce(20.0f * Vector3.ProjectOnPlane(Physics.gravity, slopeHit.normal), ForceMode.Force);
+            }
+            rb.useGravity = false;
+
+            if (rb.velocity.y > 0)
+                rb.AddForce(Vector3.down * 80f, ForceMode.Force);
+        }
+        else
+        {
+            rb.AddForce(moveDir.normalized * movSpeed * 6f, ForceMode.Force);
+            rb.useGravity = true;
+        }
     }
 
+
+    //Checking
     private void CheckGround()
     {
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
@@ -99,41 +149,102 @@ public class S_PlayerMov : MonoBehaviour
             doubleJumpReady = true;
         }
         else rb.drag = 0;
+
+        if(CheckSlope() && isSliding)
+        {
+            rb.drag = 0;
+            if (rb.velocity.y > 0)
+                rb.drag = groundDrag;
+        }
+    }
+
+    private bool CheckSlope()
+    {
+        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.2f))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            Debug.Log(angle);
+            return angle < maxSlopeAngle && angle != 0;
+        }
+
+        return false;
+    }
+
+    private Vector3 GetSlopeDir()
+    {
+        return Vector3.ProjectOnPlane(moveDir, slopeHit.normal).normalized;
     }
 
     private void CheckWall()
     {
         walled = Physics.Raycast(transform.position, Vector3.right, playerWidth * 0.5f + 0.2f, whatIsWall);
         if(!walled) walled = Physics.Raycast(transform.position, Vector3.left, playerWidth * 0.5f + 0.2f, whatIsWall);
+
+        if (walled) doubleJumpReady = true;
     }
 
+
+    //Clamping
     private void SpeedClamp()
     {
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        if (flatVel.magnitude > movSpeed)
+        if (flatVel.magnitude >  movSpeed)
         {
-            Vector3 limitedVel = flatVel.normalized * movSpeed;
-            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+            rb.AddForce(-flatVel.normalized * (rb.velocity.magnitude - movSpeed) * (rb.velocity.magnitude - movSpeed) * 1f, ForceMode.Force);
         }
     }
 
     private void WallClamp()
     {
         float momentum = rb.velocity.y;
-        if (momentum < 0f) momentum = -0.6f;
+        if (momentum < 0f) momentum = 0f;
 
         rb.velocity = new Vector3(rb.velocity.x, momentum, rb.velocity.z);
     }
 
+
+    //Jumping
     private void Jump()
     {
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
+
     private void DoubleJump()
     {
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(transform.up * jumpForce * 0.80f, ForceMode.Impulse);
+    }
+
+
+    //Sliding
+    private void StartSlide()
+    {
+        isSliding = true;
+
+        player.localScale = new Vector3(player.localScale.x, slideYScale, player.localScale.z);
+        rb.AddForce(Vector3.down * 10f, ForceMode.Impulse);
+
+        slideTimer = maxSideTime;
+    }
+
+    private void EndSlide()
+    {
+        isSliding = false;
+        player.localScale = new Vector3(player.localScale.x, startYScale, player.localScale.z);
+    }
+
+    private void Sliding()
+    {
+        Vector3 inputDirection = orient.forward * vertIn + orient.right * horzIn;
+        slideTimer -= Time.deltaTime;
+
+        if (CheckSlope())
+        {
+            slideTimer = maxSideTime;
+        }
+
+        if (slideTimer < 0) EndSlide();
     }
 }
