@@ -20,7 +20,7 @@ public class S_PlayerMov : MonoBehaviour
     bool walled;
 
     [Header("Sliding")]
-    public float maxSideTime;
+    public float maxSlideTime;
     public float slideForce;
     private float slideTimer;
 
@@ -123,16 +123,26 @@ public class S_PlayerMov : MonoBehaviour
             rb.AddForce(GetSlopeDir() * movSpeed * 10f, ForceMode.Force);
             if(isSliding)
             {
-                rb.AddForce(20.0f * Vector3.ProjectOnPlane(Physics.gravity, slopeHit.normal), ForceMode.Force);
+                rb.AddForce(Vector3.ProjectOnPlane(Physics.gravity, slopeHit.normal), ForceMode.Force);
             }
             rb.useGravity = false;
 
             if (rb.velocity.y > 0)
-                rb.AddForce(Vector3.down * 80f, ForceMode.Force);
+                rb.AddForce(Physics.gravity, ForceMode.Force);
+        }
+        else if (isSliding)
+        {
+            rb.AddForce(moveDir.normalized * movSpeed * (18f * slideTimer * slideTimer / (maxSlideTime * maxSlideTime)), ForceMode.Force);
+            rb.useGravity = true;
+        }
+        else if (grounded)
+        {
+            rb.AddForce(moveDir.normalized * movSpeed * (6f + groundDrag), ForceMode.Force);
+            rb.useGravity = true;
         }
         else
         {
-            rb.AddForce(moveDir.normalized * movSpeed * 6f, ForceMode.Force);
+            rb.AddForce(moveDir.normalized * movSpeed * (5f), ForceMode.Force);
             rb.useGravity = true;
         }
     }
@@ -156,15 +166,20 @@ public class S_PlayerMov : MonoBehaviour
             if (rb.velocity.y > 0)
                 rb.drag = groundDrag;
         }
+        else if (isSliding)
+        {
+            if (rb.velocity.y > 0)
+                rb.drag = groundDrag;
+        }
     }
 
     private bool CheckSlope()
     {
         if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.2f))
         {
-            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
-            Debug.Log(angle);
-            return angle < maxSlopeAngle && angle != 0;
+            float slopeAngle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            Debug.Log(slopeAngle);
+            return slopeAngle < maxSlopeAngle && slopeAngle != 0;
         }
 
         return false;
@@ -214,7 +229,7 @@ public class S_PlayerMov : MonoBehaviour
     private void DoubleJump()
     {
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        rb.AddForce(transform.up * jumpForce * 0.80f, ForceMode.Impulse);
+        rb.AddForce(transform.up * jumpForce * 1f, ForceMode.Impulse);
     }
 
 
@@ -224,9 +239,9 @@ public class S_PlayerMov : MonoBehaviour
         isSliding = true;
 
         player.localScale = new Vector3(player.localScale.x, slideYScale, player.localScale.z);
-        rb.AddForce(Vector3.down * 10f, ForceMode.Impulse);
+        rb.AddForce(Vector3.down * 4f, ForceMode.Impulse);
 
-        slideTimer = maxSideTime;
+        slideTimer = maxSlideTime;
     }
 
     private void EndSlide()
@@ -242,7 +257,7 @@ public class S_PlayerMov : MonoBehaviour
 
         if (CheckSlope())
         {
-            slideTimer = maxSideTime;
+            slideTimer = maxSlideTime;
         }
 
         if (slideTimer < 0) EndSlide();
