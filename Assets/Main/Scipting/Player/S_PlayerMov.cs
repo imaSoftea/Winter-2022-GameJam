@@ -184,7 +184,6 @@ public class S_PlayerMov : MonoBehaviour
         if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.2f))
         {
             float slopeAngle = Vector3.Angle(Vector3.up, slopeHit.normal);
-            Debug.Log(slopeAngle);
             return slopeAngle < maxSlopeAngle && slopeAngle != 0;
         }
 
@@ -201,7 +200,13 @@ public class S_PlayerMov : MonoBehaviour
         walled = Physics.Raycast(transform.position, Vector3.right, playerWidth * 0.5f + 0.2f, whatIsWall);
         if(!walled) walled = Physics.Raycast(transform.position, Vector3.left, playerWidth * 0.5f + 0.2f, whatIsWall);
 
-        if (walled) doubleJumpReady = true;
+        if (walled) 
+        {
+            groundLeftTime = 0.2f;
+            Debug.Log("on wall");
+            doubleJumpReady = true;
+
+        }
     }
 
 
