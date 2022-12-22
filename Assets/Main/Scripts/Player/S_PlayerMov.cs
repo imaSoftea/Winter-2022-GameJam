@@ -119,7 +119,7 @@ public class S_PlayerMov : MonoBehaviour
         moveDir = orient.forward * vertIn + orient.right * horzIn;
 
         //Add Force
-        if (CheckSlope())
+        if (CheckSlope() && rb.velocity.y < 0)
         {
             rb.AddForce(GetSlopeDir() * movSpeed * 10f, ForceMode.Force);
             if (isSliding)
@@ -130,6 +130,11 @@ public class S_PlayerMov : MonoBehaviour
 
             if (rb.velocity.y > 0)
                 rb.AddForce(Physics.gravity, ForceMode.Force);
+        }
+        else if (isSliding && rb.velocity.y > 0)
+        {
+            rb.AddForce(moveDir.normalized * movSpeed * (5f * slideTimer * slideTimer / (maxSlideTime * maxSlideTime)), ForceMode.Force);
+            rb.useGravity = true;
         }
         else if (isSliding)
         {
@@ -159,6 +164,8 @@ public class S_PlayerMov : MonoBehaviour
             rb.drag = groundDrag;
             doubleJumpReady = true;
             groundLeftTime = 0.2f;
+
+            Debug.Log("Grounded");
         }
         else
         {
@@ -199,13 +206,13 @@ public class S_PlayerMov : MonoBehaviour
     {
         walled = Physics.Raycast(transform.position, Vector3.right, playerWidth * 0.5f + 0.2f, whatIsWall);
         if (!walled) walled = Physics.Raycast(transform.position, Vector3.left, playerWidth * 0.5f + 0.2f, whatIsWall);
+        if (!walled) walled = Physics.Raycast(transform.position, Vector3.forward, playerWidth * 0.5f + 0.2f, whatIsWall);
+        if (!walled) walled = Physics.Raycast(transform.position, Vector3.back, playerWidth * 0.5f + 0.2f, whatIsWall);
 
         if (walled) 
         {
             groundLeftTime = 0.2f;
-            Debug.Log("on wall");
             doubleJumpReady = true;
-
         }
     }
 
@@ -224,7 +231,7 @@ public class S_PlayerMov : MonoBehaviour
     private void WallClamp()
     {
         float momentum = rb.velocity.y;
-        if (momentum < 0f) momentum = 0f;
+        if (momentum < -0.3f) momentum = -0.3f;
 
         rb.velocity = new Vector3(rb.velocity.x, momentum, rb.velocity.z);
     }
