@@ -13,6 +13,7 @@ public class S_PlayerMov : MonoBehaviour
     public float playerHeight;
     public LayerMask whatIsGround;
     float groundLeftTime;
+    float justJumped;
     bool grounded;
 
     [Header("Wall Running")]
@@ -66,9 +67,9 @@ public class S_PlayerMov : MonoBehaviour
         CheckWall();
 
         //Jump
-        if ((Input.GetKeyDown(jumpKey) && (walled || grounded || doubleJumpReady || groundLeftTime > 0f)))
+        if (Input.GetKeyDown(jumpKey) && (walled || grounded || doubleJumpReady || groundLeftTime > 0f))
         {
-            if (!grounded && !walled && !(groundLeftTime > 0f))
+            if ((!grounded && !walled && !(groundLeftTime > 0f)) || justJumped > 0f)
             {
                 DoubleJump();
                 doubleJumpReady = false;
@@ -76,8 +77,11 @@ public class S_PlayerMov : MonoBehaviour
             else
             {
                 Jump();
+                justJumped = 0.2f;
             }
         }
+
+        justJumped -= Time.deltaTime;
 
         //Sliding
         if (Input.GetKeyDown(slideKey) && (vertIn != 0 || vertIn != 0))
