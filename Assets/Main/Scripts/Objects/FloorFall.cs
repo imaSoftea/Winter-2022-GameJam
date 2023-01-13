@@ -13,4 +13,11 @@ public class FloorFall : MonoBehaviour
             anim.SetBool("PlayFall", true);
         }
     }
+    private void OnTriggerExit(Collider col)
+    {
+        if (col.CompareTag("Player"))
+        {
+            anim.SetBool("PlayFall", false);
+        }
+    }
 }
