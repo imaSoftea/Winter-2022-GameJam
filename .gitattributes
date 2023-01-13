@@ -1,0 +1,2 @@
+*fbx filter=lfs diff=lfs merge=lfs -text
+O_IceLevel.fbx filter=lfs diff=lfs merge=lfs -text
