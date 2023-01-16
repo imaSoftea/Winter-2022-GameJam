@@ -26,7 +26,9 @@ public class S_PlayerMov1 : MonoBehaviour
     [Header("Sliding")]
     public float maxSlideTime;
     public float slideForce;
-    private float slideTimer;
+    public float slideTimer;
+    private KeyCode slideKey = KeyCode.LeftControl;
+    public bool lastFloorIce;
 
     private float bumpAvoidTimer;
 
@@ -36,7 +38,7 @@ public class S_PlayerMov1 : MonoBehaviour
     public float maxSlopeAngle;
     private RaycastHit slopeHit;
 
-    private bool isSliding;
+    public bool isSliding;
 
     [Header("Other")]
     public Transform player;
@@ -61,6 +63,7 @@ public class S_PlayerMov1 : MonoBehaviour
         rb.freezeRotation = true;
 
         startYScale = player.localScale.y;
+        lastFloorIce = false;
     }
 
     //Updates
@@ -75,7 +78,7 @@ public class S_PlayerMov1 : MonoBehaviour
         {
             if ((!grounded && !onIce && !walled && !(groundLeftTime > 0f)) || justJumped > 0f)
             {
-                DoubleJump();
+                Jump();
                 doubleJumpReady = false;
             }
             else
@@ -88,12 +91,12 @@ public class S_PlayerMov1 : MonoBehaviour
         justJumped -= Time.deltaTime;
 
         //Sliding
-        if (onIce)
+        if ((Input.GetKeyDown(slideKey) && (vertIn != 0 || vertIn != 0)) || (onIce && !isSliding))
         {
             StartSlide();
         }
 
-        if (!onIce)
+        if (Input.GetKeyUp(slideKey) && isSliding)
         {
             EndSlide();
         }
@@ -146,6 +149,12 @@ public class S_PlayerMov1 : MonoBehaviour
 
             if (rb.velocity.y > 0)
                 rb.AddForce(Physics.gravity, ForceMode.Force);
+        }
+        else if (isSliding && lastFloorIce)
+        {
+            rb.AddForce(moveDir.normalized * movSpeed * (2f * slideTimer * slideTimer / (maxSlideTime * maxSlideTime)), ForceMode.Force);
+            rb.useGravity = true;
+            rb.AddForce(transform.up * -4, ForceMode.Force);
         }
         else if (isSliding && rb.velocity.y > 0)
         {
@@ -223,13 +232,23 @@ public class S_PlayerMov1 : MonoBehaviour
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, (whatIsGround));
         onIce = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsIce);
 
-        if (grounded && !activeGrapple)
+        if(onIce)
+        {
+            lastFloorIce = true;
+        }
+        if(grounded)
+        {
+            lastFloorIce = false;
+        }
+
+        if ((onIce || grounded) && !activeGrapple)
         {
             rb.drag = groundDrag;
-            doubleJumpReady = true;
+            if(grounded)
+            {
+                doubleJumpReady = true;
+            }
             groundLeftTime = 0.2f;
-
-            Debug.Log("Grounded");
         }
         else
         {
@@ -285,10 +304,13 @@ public class S_PlayerMov1 : MonoBehaviour
     private void SpeedClamp()
     {
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        float curMax = movSpeed;
+        if (lastFloorIce == true)
+            curMax *= 2;
 
-        if (flatVel.magnitude > movSpeed)
+        if (flatVel.magnitude > curMax)
         {
-            rb.AddForce(-flatVel.normalized * (rb.velocity.magnitude - movSpeed) * (rb.velocity.magnitude - movSpeed) * 1f, ForceMode.Force);
+            rb.AddForce(-flatVel.normalized * (rb.velocity.magnitude - curMax) * (rb.velocity.magnitude - curMax) * 1f, ForceMode.Force);
         }
     }
 
@@ -305,34 +327,31 @@ public class S_PlayerMov1 : MonoBehaviour
     private void Jump()
     {
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        if(lastFloorIce == false)
+            rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        else
+            rb.AddForce(transform.up * jumpForce * 0.013f, ForceMode.Impulse);
     }
-
-    private void DoubleJump()
-    {
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        rb.AddForce(transform.up * jumpForce * 1f, ForceMode.Impulse);
-    }
-
 
     //Sliding
     private void StartSlide()
     {
         isSliding = true;
 
-        //player.localScale = new Vector3(player.localScale.x, slideYScale, player.localScale.z);
-        rb.AddForce(Vector3.down * 4f, ForceMode.Impulse);
+        if(lastFloorIce == false)
+        {
+            player.localScale = new Vector3(player.localScale.x, slideYScale, player.localScale.z);
+
+            rb.AddForce(Vector3.down * 4f, ForceMode.Impulse);
+        }
 
         slideTimer = maxSlideTime;
-
-        movSpeed = 10f;
     }
 
-    private void EndSlide()
+    public void EndSlide()
     {
         isSliding = false;
         player.localScale = new Vector3(player.localScale.x, startYScale, player.localScale.z);
-        movSpeed = 6.25f;
     }
 
     private void Sliding()
