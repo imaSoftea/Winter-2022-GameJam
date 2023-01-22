@@ -35,7 +35,7 @@ AnimatorController:
   m_Name: Gate (1)
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: SwitchFlipped
+  - m_Name: OpenGate
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -115,7 +115,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: SwitchFlipped
+    m_ConditionEvent: OpenGate
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -9110270463540031765}
