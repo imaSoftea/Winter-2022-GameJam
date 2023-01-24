@@ -8,4 +8,25 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Main/Scenes/Test Scene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Main/Scenes/L_Entrance.unity
+    guid: 04125cedda8084740aa2e060c6014d7f
+  - enabled: 1
+    path: Assets/Main/Scenes/L_Tutorial.unity
+    guid: f956ac42abfd97b478fb4c9e8bca791c
+  - enabled: 1
+    path: Assets/Main/Scenes/L_Blade.unity
+    guid: 91dee9b2217cd654c8d9c3b9f2fd0048
+  - enabled: 1
+    path: Assets/Main/Scenes/L_Void.unity
+    guid: 2f0766b877c173f4890c8923e808fa97
+  - enabled: 1
+    path: Assets/Main/Scenes/L_Fire.unity
+    guid: 5e6c2de988e620c4e870e573852fd1ca
+  - enabled: 1
+    path: Assets/Main/Scenes/L_Ice.unity
+    guid: d0a41ee4bb51d224e9edd7cf9ca1b47a
+  - enabled: 1
+    path: Assets/Main/Scenes/L_Crush.unity
+    guid: 8cfc8cc145ecc2746896c92379747816
   m_configObjects: {}

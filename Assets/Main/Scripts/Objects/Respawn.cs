@@ -11,6 +11,5 @@ public class Respawn : MonoBehaviour
     {
         Debug.Log("Respawn Triggered");
         col.GetComponent<Collider>().GetComponent<Rigidbody>().position = respawnPoint.position;
-
     }
 }
