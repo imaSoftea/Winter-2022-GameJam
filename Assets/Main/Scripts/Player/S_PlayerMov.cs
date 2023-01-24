@@ -40,7 +40,6 @@ public class S_PlayerMov : MonoBehaviour
     [Header("Other")]
     public float FreezeMaxTime;
     public float MinActivate;
-    private KeyCode slideKey = KeyCode.LeftShift;
 
     [Header("Other")]
     public Transform player;
