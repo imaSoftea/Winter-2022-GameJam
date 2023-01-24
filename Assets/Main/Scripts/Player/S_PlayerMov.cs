@@ -38,6 +38,11 @@ public class S_PlayerMov : MonoBehaviour
     private bool isSliding;
 
     [Header("Other")]
+    public float FreezeMaxTime;
+    public float MinActivate;
+    private KeyCode slideKey = KeyCode.LeftShift;
+
+    [Header("Other")]
     public Transform player;
 
     KeyCode jumpKey = KeyCode.Space;

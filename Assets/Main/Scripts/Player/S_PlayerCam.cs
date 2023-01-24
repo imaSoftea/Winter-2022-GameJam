@@ -14,7 +14,7 @@ public class S_PlayerCam : MonoBehaviour
 
     //Rotation
     float xRotation;
-    float yRotation;
+    public float yRotation;
 
     void Start()
     {
