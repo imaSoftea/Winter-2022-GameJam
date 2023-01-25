@@ -7,6 +7,7 @@ public class GetHook : MonoBehaviour
     public GameObject Hook;
     public GameObject Hook2;
     public GameObject Display;
+    public GameObject Aim;
     public GameObject txtToDisplay;             //display the UI text
     private bool PlayerInZone;                  //check if the player is in trigger
     private bool GotHook;
@@ -28,6 +29,7 @@ public class GetHook : MonoBehaviour
             Hook.SetActive(true);
             Hook2.SetActive(true);
             Display.SetActive(false);
+            Aim.SetActive(true);
             GotHook = true;
             enableScript.hasGrapple = true;
         }

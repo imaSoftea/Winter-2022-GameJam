@@ -38,6 +38,7 @@ Material:
     - _GradientNoise: 3
     - _OutLine2Size: 0.1
     - _Outline1Size: 0.2
+    - _PixelateAmount: 0.263
     - _QueueControl: 0
     - _QueueOffset: 0
     - _VoroniAngle: 100

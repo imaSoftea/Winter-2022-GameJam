@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class S_Grappling : MonoBehaviour
 {
@@ -36,7 +37,7 @@ public class S_Grappling : MonoBehaviour
 
     private void Update()
     {
-        if (hasGrapple) {
+        if (hasGrapple || SceneManager.GetActiveScene().name == "L_Ice") {
             if (Input.GetKeyDown(grappleKey)) StartGrapple();
 
             if (grapplingCdTimer > 0)
