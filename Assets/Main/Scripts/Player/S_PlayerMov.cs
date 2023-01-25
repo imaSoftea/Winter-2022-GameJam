@@ -102,7 +102,6 @@ public class S_PlayerMov : MonoBehaviour
         if (walled)
         {
             WallClamp();
-            Debug.Log("Riding Wall");
         }
     }
 
@@ -172,8 +171,6 @@ public class S_PlayerMov : MonoBehaviour
             rb.drag = groundDrag;
             doubleJumpReady = true;
             groundLeftTime = 0.2f;
-
-            Debug.Log("Grounded");
         }
         else
         {
