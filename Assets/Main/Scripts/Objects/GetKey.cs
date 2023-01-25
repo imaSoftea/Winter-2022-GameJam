@@ -9,6 +9,8 @@ public class GetKey : MonoBehaviour
     private bool PlayerInZone;                  //check if the player is in trigger
     bool GotKey;
 
+    public FireSwitch enableScript;
+
     private void Start()
     {
         PlayerInZone = false;                   //player not in zone       
@@ -22,6 +24,7 @@ public class GetKey : MonoBehaviour
         {
             Key.SetActive(false);
             GotKey = true;
+            enableScript.hasKey = true;
         }
     }
 

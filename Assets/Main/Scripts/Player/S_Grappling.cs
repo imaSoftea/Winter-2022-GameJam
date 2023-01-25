@@ -26,19 +26,23 @@ public class S_Grappling : MonoBehaviour
     public KeyCode grappleKey = KeyCode.Mouse1;
 
     private bool grappling;
+    public bool hasGrapple;
 
     private void Start()
     {
         pm = GetComponent<S_PlayerMov1>();
+        hasGrapple = false;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(grappleKey)) StartGrapple();
+        if (hasGrapple) {
+            if (Input.GetKeyDown(grappleKey)) StartGrapple();
 
-        if (grapplingCdTimer > 0)
-        {
-            grapplingCdTimer -= Time.deltaTime;
+            if (grapplingCdTimer > 0)
+            {
+                grapplingCdTimer -= Time.deltaTime;
+            }
         }
     }
 

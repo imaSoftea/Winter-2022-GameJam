@@ -11,6 +11,8 @@ public class GetHook : MonoBehaviour
     private bool PlayerInZone;                  //check if the player is in trigger
     private bool GotHook;
 
+    public S_Grappling enableScript;
+
 
     private void Start()
     {
@@ -27,6 +29,7 @@ public class GetHook : MonoBehaviour
             Hook2.SetActive(true);
             Display.SetActive(false);
             GotHook = true;
+            enableScript.hasGrapple = true;
         }
     }
 
