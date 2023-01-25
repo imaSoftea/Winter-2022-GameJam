@@ -9,6 +9,9 @@ public class IceRespawn : MonoBehaviour
 
     void OnTriggerEnter(Collider col)
     {
+        AudioSource sound = GameObject.Find("DeathSound").GetComponent<AudioSource>();
+        sound.Play();
+
         Debug.Log("Respawn Triggered");
         col.GetComponent<Collider>().GetComponent<Rigidbody>().position = respawnPoint.position;
 

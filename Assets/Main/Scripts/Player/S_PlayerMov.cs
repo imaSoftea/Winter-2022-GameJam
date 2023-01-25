@@ -73,6 +73,9 @@ public class S_PlayerMov : MonoBehaviour
         //Jump
         if (Input.GetKeyDown(jumpKey) && (walled || grounded || doubleJumpReady || groundLeftTime > 0f))
         {
+            AudioSource jump = GetComponent<AudioSource>();
+            jump.Play();
+
             if ((!grounded && !walled && !(groundLeftTime > 0f)) || justJumped > 0f)
             {
                 DoubleJump();
