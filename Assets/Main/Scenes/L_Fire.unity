@@ -5661,7 +5661,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7166001268784382956}
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -71.57301, y: 137.904, z: -2.2552383}
+  m_LocalPosition: {x: -71.57301, y: 137.904, z: -2.255238}
   m_LocalScale: {x: 53.232826, y: 50.71094, z: 55.70644}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12146,6 +12146,7 @@ GameObject:
   - component: {fileID: 6064015072703238512}
   - component: {fileID: 8807521642805046836}
   - component: {fileID: 8807521642805046837}
+  - component: {fileID: 8807521642805046838}
   m_Layer: 6
   m_Name: Platform.021
   m_TagString: Untagged
@@ -13984,7 +13985,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5080932925647089385}
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -36.707542, y: 92.659615, z: 0.16385598}
+  m_LocalPosition: {x: -36.74, y: 92.659615, z: 0.16385598}
   m_LocalScale: {x: 8.547451, y: 728.0028, z: 151.37393}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14684,6 +14685,26 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 2969803092964841180, guid: 5993d84861715184298e12770948c1ee, type: 3}
+--- !u!95 &8807521642805046838
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7166001268784382956}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e3c823b9352832b498016818287fd09e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &8831778612058370562
 GameObject:
   m_ObjectHideFlags: 0
